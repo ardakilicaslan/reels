@@ -32,8 +32,8 @@ INSTAGRAM_ACCOUNT_ID = os.getenv("INSTAGRAM_ACCOUNT_ID", "17841426247185906")
 INSTAGRAM_ACCESS_TOKEN = os.getenv("INSTAGRAM_ACCESS_TOKEN", "IGAAbu2bIIfmNBZAFpZAMkdMYmdOYW1IZADBWRWRTNEVEOVdocEM3VmNrWko5VkV1LW1pUGoxWG00YjJ0NnFfTElZALTR1elc5TVhFSUFlWnRhRFR3dERQakttYjJmNjNQbG9qOW4yVFJ5N1pCaXlqckpHdFQtSDQxSXNDc3pqY0xiUQZDZD")
 SERVER_URL = os.getenv("SERVER_URL", "https://reels-mwjz.onrender.com")
 
-# SADECE BU KULLANICIDAN GELEN VİDEOLAR PAYLAŞILIR (GÜVENLİK)
-ALLOWED_USERNAME = "ardakilicaslan"
+# SADECE BU KULLANICILARDAN GELEN VİDEOLAR PAYLAŞILIR (GÜVENLİK)
+ALLOWED_USERS = {"mamutogurban", "ardakilicaslan"}
 
 MEDIA_DIR = Path("/tmp/media")
 MEDIA_DIR.mkdir(parents=True, exist_ok=True)
@@ -242,9 +242,9 @@ async def receive_webhook(request: Request, background_tasks: BackgroundTasks):
 
                         add_log(f"DM'den video yakalandı! Gönderen: @{sender_username} (ID: {sender_id})")
 
-                        # Güvenlik Kontrolü: Sadece @ardakilicaslan kabul edilir
-                        if ALLOWED_USERNAME and sender_username and sender_username.lower() != ALLOWED_USERNAME.lower():
-                            add_log(f"⚠️ Video @{sender_username} kullanıcısından geldi. Sadece @{ALLOWED_USERNAME} izinli! Yoksayıldı.", "WARN")
+                        # Güvenlik Kontrolü: Sadece izinli hesaplar kabul edilir
+                        if ALLOWED_USERS and sender_username and sender_username.lower() not in [u.lower() for u in ALLOWED_USERS]:
+                            add_log(f"⚠️ Video @{sender_username} kullanıcısından geldi. Sadece {ALLOWED_USERS} izinli! Yoksayıldı.", "WARN")
                             continue
 
                         background_tasks.add_task(
