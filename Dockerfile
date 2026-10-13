@@ -6,14 +6,11 @@ FROM n8nio/n8n:latest
 
 USER root
 
-# FFmpeg ve FFprobe çalıştırılabilir dosyalarını n8n yoluna kopyala
+# FFmpeg ve FFprobe ikili dosyalarını n8n PATH'ine kopyala
 COPY --from=ffmpeg-source /ffmpeg /usr/local/bin/
 COPY --from=ffmpeg-source /ffprobe /usr/local/bin/
 
-# Güvenlik için yetkisiz node kullanıcısına geri dön
+# n8n kullanıcısına geri dön
 USER node
 
-# n8n varsayılan portu
-EXPOSE 5678
-
-CMD ["n8n", "start"]
+# n8n resmi imajı kendi ENTRYPOINT ve CMD'sini otomatik çalıştırır
