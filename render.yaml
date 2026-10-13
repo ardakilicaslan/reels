@@ -13,6 +13,10 @@ services:
         value: 0.0.0.0
       - key: N8N_PROTOCOL
         value: https
+      - key: N8N_EDITOR_BASE_URL
+        value: https://reels-mwjz.onrender.com/
+      - key: N8N_PUSH_BACKEND
+        value: sse
       - key: WEBHOOK_URL
         value: https://reels-mwjz.onrender.com/
       - key: NODES_EXCLUDE

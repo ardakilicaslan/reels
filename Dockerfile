@@ -15,8 +15,12 @@ ENV PORT=5678
 ENV N8N_PORT=5678
 ENV N8N_HOST=0.0.0.0
 ENV N8N_PROTOCOL=https
+ENV N8N_EDITOR_BASE_URL=https://reels-mwjz.onrender.com/
 
-# Execute Command (FFmpeg çalıştırma) düğümünü aktifleştir
+# Render.com'da WebSocket kopmalarını engelleyen kritik ayar: SSE modu
+ENV N8N_PUSH_BACKEND=sse
+
+# Execute Command (FFmpeg) düğümünü aktifleştir
 ENV NODES_EXCLUDE="[]"
 
 # n8n kullanıcısına geri dön

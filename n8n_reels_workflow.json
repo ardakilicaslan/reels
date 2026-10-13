@@ -8,19 +8,19 @@
         "responseMode": "responseNode",
         "options": {}
       },
-      "id": "webhook-verify-get",
-      "name": "Meta Webhook Doğrulama (GET)",
+      "id": "meta-webhook-trigger",
+      "name": "Meta Webhook Trigger",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
         200,
-        180
+        300
       ]
     },
     {
       "parameters": {
         "respondWith": "text",
-        "responseBody": "={{ $json.query['hub.challenge'] }}"
+        "responseBody": "={{ $json.query['hub.challenge'] || 'OK' }}"
       },
       "id": "respond-challenge",
       "name": "Meta Challenge Yanıtla",
@@ -29,21 +29,6 @@
       "position": [
         460,
         180
-      ]
-    },
-    {
-      "parameters": {
-        "httpMethod": "POST",
-        "path": "instagram-dm-webhook",
-        "options": {}
-      },
-      "id": "webhook-receive-post",
-      "name": "Meta DM Alıcı (POST)",
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 2,
-      "position": [
-        200,
-        420
       ]
     },
     {
@@ -167,20 +152,14 @@
     }
   ],
   "connections": {
-    "Meta Webhook Doğrulama (GET)": {
+    "Meta Webhook Trigger": {
       "main": [
         [
           {
             "node": "Meta Challenge Yanıtla",
             "type": "main",
             "index": 0
-          }
-        ]
-      ]
-    },
-    "Meta DM Alıcı (POST)": {
-      "main": [
-        [
+          },
           {
             "node": "DM Verisini Ayrıştır",
             "type": "main",
