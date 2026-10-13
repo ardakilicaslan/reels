@@ -211,7 +211,9 @@ async def receive_webhook(request: Request, background_tasks: BackgroundTasks):
     """Gelen Instagram DM mesajlarını yakalar ve arka planda Reels olarak yayınlar."""
     try:
         body = await request.json()
-    except Exception:
+        add_log(f"🔔 Meta Webhook Bildirimi Geldi: {str(body)[:300]}")
+    except Exception as e:
+        add_log(f"Webhook JSON okuma hatası: {e}", "WARN")
         return {"status": "ok"}
 
     entries = body.get("entry", [])
