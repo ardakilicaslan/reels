@@ -3,48 +3,18 @@
   "nodes": [
     {
       "parameters": {
-        "httpMethod": "POST",
+        "httpMethod": "GET",
         "path": "instagram-dm-webhook",
+        "responseMode": "responseNode",
         "options": {}
       },
-      "id": "webhook-trigger",
-      "name": "Meta Webhook Trigger",
+      "id": "webhook-verify-get",
+      "name": "Meta Webhook Doğrulama (GET)",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
         200,
-        300
-      ]
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict"
-          },
-          "conditions": [
-            {
-              "id": "check-challenge",
-              "leftValue": "={{ $json.query['hub.mode'] }}",
-              "rightValue": "subscribe",
-              "operator": {
-                "type": "string",
-                "operation": "equals"
-              }
-            }
-          ],
-          "combinator": "and"
-        }
-      },
-      "id": "verify-challenge-if",
-      "name": "Meta Hub Challenge Var Mı?",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2,
-      "position": [
-        420,
-        300
+        180
       ]
     },
     {
@@ -57,8 +27,23 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        640,
+        460,
         180
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "instagram-dm-webhook",
+        "options": {}
+      },
+      "id": "webhook-receive-post",
+      "name": "Meta DM Alıcı (POST)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        200,
+        420
       ]
     },
     {
@@ -70,7 +55,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        640,
+        460,
         420
       ]
     },
@@ -85,7 +70,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        860,
+        680,
         420
       ]
     },
@@ -98,7 +83,7 @@
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
       "position": [
-        1080,
+        900,
         420
       ]
     },
@@ -134,7 +119,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1300,
+        1120,
         420
       ]
     },
@@ -148,7 +133,7 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        1520,
+        1340,
         420
       ]
     },
@@ -176,24 +161,13 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1740,
+        1560,
         420
       ]
     }
   ],
   "connections": {
-    "Meta Webhook Trigger": {
-      "main": [
-        [
-          {
-            "node": "Meta Hub Challenge Var Mı?",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Meta Hub Challenge Var Mı?": {
+    "Meta Webhook Doğrulama (GET)": {
       "main": [
         [
           {
@@ -201,7 +175,11 @@
             "type": "main",
             "index": 0
           }
-        ],
+        ]
+      ]
+    },
+    "Meta DM Alıcı (POST)": {
+      "main": [
         [
           {
             "node": "DM Verisini Ayrıştır",
