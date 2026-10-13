@@ -220,6 +220,13 @@ async def receive_webhook(request: Request, background_tasks: BackgroundTasks):
     for entry in entries:
         messagings = entry.get("messaging", [])
         for m in messagings:
+            # 1. Okundu (read) bildirimlerini filtrele
+            if "read" in m and "message" not in m:
+                continue
+
+            if "message" not in m:
+                continue
+
             sender_id = m.get("sender", {}).get("id")
             msg = m.get("message", {})
             caption = msg.get("text") or "#reels #viral #trending"
