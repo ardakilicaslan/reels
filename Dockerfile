@@ -10,11 +10,14 @@ USER root
 COPY --from=ffmpeg-source /ffmpeg /usr/local/bin/
 COPY --from=ffmpeg-source /ffprobe /usr/local/bin/
 
-# Port ve Host ortam değişkenleri (Render.com yönlendirmesi için kritik)
+# Port ve Host ortam değişkenleri
 ENV PORT=5678
 ENV N8N_PORT=5678
 ENV N8N_HOST=0.0.0.0
 ENV N8N_PROTOCOL=https
+
+# Execute Command (FFmpeg çalıştırma) düğümünü aktifleştir
+ENV NODES_EXCLUDE="[]"
 
 # n8n kullanıcısına geri dön
 USER node
