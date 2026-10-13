@@ -28,8 +28,8 @@ app = FastAPI(title="Instagram Reels Automation Server")
 
 # Konfigürasyon
 VERIFY_TOKEN = os.getenv("VERIFY_TOKEN", "reels123")
-INSTAGRAM_ACCOUNT_ID = os.getenv("INSTAGRAM_ACCOUNT_ID", "")
-INSTAGRAM_ACCESS_TOKEN = os.getenv("INSTAGRAM_ACCESS_TOKEN", "")
+INSTAGRAM_ACCOUNT_ID = os.getenv("INSTAGRAM_ACCOUNT_ID", "17841426247185906")
+INSTAGRAM_ACCESS_TOKEN = os.getenv("INSTAGRAM_ACCESS_TOKEN", "IGAAbu2bIIfmNBZAFpZAMkdMYmdOYW1IZADBWRWRTNEVEOVdocEM3VmNrWko5VkV1LW1pUGoxWG00YjJ0NnFfTElZALTR1elc5TVhFSUFlWnRhRFR3dERQakttYjJmNjNQbG9qOW4yVFJ5N1pCaXlqckpHdFQtSDQxSXNDc3pqY0xiUQZDZD")
 SERVER_URL = os.getenv("SERVER_URL", "https://reels-mwjz.onrender.com")
 
 MEDIA_DIR = Path("/tmp/media")
@@ -141,7 +141,8 @@ async def process_video_and_publish(video_url: str, caption: str, sender_id: str
             return
 
         # 4. Instagram Reels Container Oluştur
-        graph_url = f"https://graph.facebook.com/v21.0/{INSTAGRAM_ACCOUNT_ID}/media"
+        base_api = "https://graph.instagram.com/v21.0"
+        graph_url = f"{base_api}/{INSTAGRAM_ACCOUNT_ID}/media"
         payload = {
             "media_type": "REELS",
             "video_url": public_video_url,
@@ -159,22 +160,22 @@ async def process_video_and_publish(video_url: str, caption: str, sender_id: str
         add_log(f"[{task_id}] Container oluşturuldu (ID: {container_id}). Meta'nın işlemesi bekleniyor...")
 
         # 5. Container Durumunu Kontrol Et (Finished olana kadar bekle)
-        for _ in range(20):
+        for _ in range(25):
             await asyncio.sleep(5)
             status_res = requests.get(
-                f"https://graph.facebook.com/v21.0/{container_id}",
+                f"{base_api}/{container_id}",
                 params={"fields": "status_code", "access_token": INSTAGRAM_ACCESS_TOKEN},
             ).json()
             status_code = status_res.get("status_code")
             if status_code == "FINISHED":
-                add_log(f"[{task_id}] Video Meta tarafından işlendi. Yayınlanıyor...")
+                add_log(f"[{task_id}] Video Meta tarafından işlendi. Yayınlanıyor...", "SUCCESS")
                 break
             elif status_code == "ERROR":
                 add_log(f"[{task_id}] Meta video işleme hatası verdi: {status_res}", "ERROR")
                 return
 
         # 6. Reels Yayınla!
-        publish_url = f"https://graph.facebook.com/v21.0/{INSTAGRAM_ACCOUNT_ID}/media_publish"
+        publish_url = f"{base_api}/{INSTAGRAM_ACCOUNT_ID}/media_publish"
         pub_res = requests.post(
             publish_url,
             data={"creation_id": container_id, "access_token": INSTAGRAM_ACCESS_TOKEN},
