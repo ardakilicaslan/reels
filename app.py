@@ -218,8 +218,16 @@ async def receive_webhook(request: Request, background_tasks: BackgroundTasks):
 
     entries = body.get("entry", [])
     for entry in entries:
-        messagings = entry.get("messaging", [])
-        for m in messagings:
+        # Hem messaging formatını (Messenger) hem de changes formatını (Instagram Graph API) topla
+        events = []
+        if "messaging" in entry:
+            events.extend(entry.get("messaging", []))
+        if "changes" in entry:
+            for ch in entry.get("changes", []):
+                if ch.get("field") == "messages":
+                    events.append(ch.get("value", {}))
+
+        for m in events:
             # 1. Okundu (read) bildirimlerini filtrele
             if "read" in m and "message" not in m:
                 continue
