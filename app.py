@@ -222,12 +222,16 @@ async def receive_webhook(request: Request, background_tasks: BackgroundTasks):
         for m in messagings:
             sender_id = m.get("sender", {}).get("id")
             msg = m.get("message", {})
-            caption = msg.get("text", "#reels")
+            caption = msg.get("text") or "#reels #viral #trending"
 
-            # Ekli medyaları tara
+            # Ekli medyaları tara (video, reels, share vb.)
             attachments = msg.get("attachments", [])
+            if not attachments and msg.get("text"):
+                add_log(f"✉️ Metin mesajı yakalandı: '{msg.get('text')}' (Gönderen: {sender_id})")
+
             for att in attachments:
-                if att.get("type") in ("video", "share"):
+                att_type = att.get("type", "")
+                if att_type in ("video", "share", "ig_reel", "reel", "ig_post", "media") or "url" in att.get("payload", {}):
                     video_url = att.get("payload", {}).get("url")
                     if video_url:
                         # Gönderen kullanıcı adını sorgula
@@ -242,16 +246,18 @@ async def receive_webhook(request: Request, background_tasks: BackgroundTasks):
                         except Exception:
                             pass
 
-                        add_log(f"DM'den video yakalandı! Gönderen: @{sender_username} (ID: {sender_id})")
+                        add_log(f"🎬 DM'den Reels/Video yakalandı! (Tip: {att_type}, Gönderen: @{sender_username or sender_id})")
 
                         # Güvenlik Kontrolü: Sadece izinli hesaplar kabul edilir
                         if ALLOWED_USERS and sender_username and sender_username.lower() not in [u.lower() for u in ALLOWED_USERS]:
-                            add_log(f"⚠️ Video @{sender_username} kullanıcısından geldi. Sadece {ALLOWED_USERS} izinli! Yoksayıldı.", "WARN")
+                            add_log(f"⚠️ Medya @{sender_username} kullanıcısından geldi. Sadece {ALLOWED_USERS} izinli! Yoksayıldı.", "WARN")
                             continue
 
                         background_tasks.add_task(
                             process_video_and_publish, video_url, caption, sender_id
                         )
+                    else:
+                        add_log(f"⚠️ Medya eklentisi bulundu fakat direkt URL yok: {att}", "WARN")
 
     return {"status": "ok"}
 
