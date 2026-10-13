@@ -33,7 +33,7 @@ INSTAGRAM_ACCESS_TOKEN = os.getenv("INSTAGRAM_ACCESS_TOKEN", "IGAAbu2bIIfmNBZAFp
 SERVER_URL = os.getenv("SERVER_URL", "https://reels-mwjz.onrender.com")
 
 # SADECE BU KULLANICILARDAN GELEN VİDEOLAR PAYLAŞILIR (GÜVENLİK)
-ALLOWED_USERS = {"mamutogurban", "ardakilicaslan"}
+ALLOWED_USERS = {"turkinsaniyiz", "mamutogurban", "ardakilicaslan"}
 
 MEDIA_DIR = Path("/tmp/media")
 MEDIA_DIR.mkdir(parents=True, exist_ok=True)
