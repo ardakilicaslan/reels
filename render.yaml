@@ -1,21 +1,23 @@
 services:
   - type: web
-    name: n8n-instagram-reels-bot
+    name: reels-mwjz
     runtime: docker
     plan: free
     dockerfilePath: Dockerfile
     envVars:
+      - key: PORT
+        value: 5678
       - key: N8N_PORT
         value: 5678
+      - key: N8N_HOST
+        value: 0.0.0.0
       - key: N8N_PROTOCOL
         value: https
       - key: WEBHOOK_URL
-        value: https://n8n-instagram-reels-bot.onrender.com/
+        value: https://reels-mwjz.onrender.com/
       - key: N8N_DEFAULT_BINARY_DATA_MODE
         value: filesystem
       - key: EXECUTIONS_DATA_PRUNE
         value: "true"
       - key: EXECUTIONS_DATA_MAX_AGE
         value: "72"
-      - key: N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS
-        value: "true"
