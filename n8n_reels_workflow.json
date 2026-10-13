@@ -1,0 +1,270 @@
+{
+  "name": "Instagram DM Reels Automation Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "instagram-dm-webhook",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Meta Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check-challenge",
+              "leftValue": "={{ $json.query['hub.mode'] }}",
+              "rightValue": "subscribe",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "verify-challenge-if",
+      "name": "Meta Hub Challenge Var Mı?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        420,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.query['hub.challenge'] }}"
+      },
+      "id": "respond-challenge",
+      "name": "Meta Challenge Yanıtla",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        640,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Webhook body'den gelen DM mesajını ayrıştır\nconst body = $input.item.json.body || {};\nconst entry = body.entry && body.entry[0];\nconst messaging = entry && entry.messaging && entry.messaging[0];\n\nif (!messaging || !messaging.message) {\n  return [];\n}\n\nconst msg = messaging.message;\nconst senderId = messaging.sender.id;\nlet videoUrl = null;\nlet caption = msg.text || \"#reels\";\n\n// Ekli medyayı kontrol et\nif (msg.attachments && msg.attachments.length > 0) {\n  for (const att of msg.attachments) {\n    if (att.type === 'video' || att.type === 'share') {\n      videoUrl = att.payload && att.payload.url;\n      break;\n    }\n  }\n}\n\nif (!videoUrl) {\n  return [];\n}\n\nreturn [{\n  json: {\n    senderId,\n    videoUrl,\n    caption,\n    timestamp: messaging.timestamp\n  }\n}];"
+      },
+      "id": "parse-dm",
+      "name": "DM Verisini Ayrıştır",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        640,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.videoUrl }}",
+        "responseFormat": "file",
+        "options": {}
+      },
+      "id": "download-video",
+      "name": "Videoyu İndir",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        860,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "command": "=ffmpeg -i {{ $binary.data.fileName }} -vf \"scale=1080:1920:force_original_aspect_ratio=decrease,pad=1080:1920:(ow-iw)/2:(oh-ih)/2\" -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k -y processed_reel.mp4"
+      },
+      "id": "ffmpeg-processing",
+      "name": "FFmpeg ile 1080x1920 HD Düzenle",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1080,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v21.0/{{ $env.INSTAGRAM_ACCOUNT_ID }}/media",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "media_type",
+              "value": "REELS"
+            },
+            {
+              "name": "video_url",
+              "value": "={{ $json.publicVideoUrl }}"
+            },
+            {
+              "name": "caption",
+              "value": "={{ $('DM Verisini Ayrıştır').item.json.caption }}"
+            },
+            {
+              "name": "access_token",
+              "value": "={{ $env.INSTAGRAM_ACCESS_TOKEN }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "create-reel-container",
+      "name": "Instagram Container Oluştur",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1300,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 25,
+        "unit": "seconds"
+      },
+      "id": "wait-for-processing",
+      "name": "Kuyruk & İşleme Bekle (25sn)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1520,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v21.0/{{ $env.INSTAGRAM_ACCOUNT_ID }}/media_publish",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "creation_id",
+              "value": "={{ $('Instagram Container Oluştur').item.json.id }}"
+            },
+            {
+              "name": "access_token",
+              "value": "={{ $env.INSTAGRAM_ACCESS_TOKEN }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "publish-reel",
+      "name": "Reels Yayınla!",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1740,
+        420
+      ]
+    }
+  ],
+  "connections": {
+    "Meta Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Meta Hub Challenge Var Mı?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Meta Hub Challenge Var Mı?": {
+      "main": [
+        [
+          {
+            "node": "Meta Challenge Yanıtla",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "DM Verisini Ayrıştır",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DM Verisini Ayrıştır": {
+      "main": [
+        [
+          {
+            "node": "Videoyu İndir",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Videoyu İndir": {
+      "main": [
+        [
+          {
+            "node": "FFmpeg ile 1080x1920 HD Düzenle",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FFmpeg ile 1080x1920 HD Düzenle": {
+      "main": [
+        [
+          {
+            "node": "Instagram Container Oluştur",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Instagram Container Oluştur": {
+      "main": [
+        [
+          {
+            "node": "Kuyruk & İşleme Bekle (25sn)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Kuyruk & İşleme Bekle (25sn)": {
+      "main": [
+        [
+          {
+            "node": "Reels Yayınla!",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

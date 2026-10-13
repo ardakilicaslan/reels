@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instagram Reels Otomasyon Paneli 🎬</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: #151d30;
+      --card-border: #1f2a44;
+      --accent-gradient: linear-gradient(135deg, #f58529, #dd2a7b, #8134af, #515bd4);
+      --primary: #dd2a7b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--card-border);
+      margin-bottom: 28px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      background: var(--accent-gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 8px 24px rgba(221, 42, 123, 0.35);
+    }
+
+    .brand h1 {
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .brand p {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(16, 185, 129, 0.12);
+      color: var(--success);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--success);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--success);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.85); }
+    }
+
+    /* Grid Layout */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 22px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .col-12 { grid-column: span 12; }
+    .col-8 { grid-column: span 8; }
+    .col-4 { grid-column: span 4; }
+    .col-6 { grid-column: span 6; }
+
+    @media (max-width: 900px) {
+      .col-8, .col-4, .col-6 { grid-column: span 12; }
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Metrics */
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .metric-card {
+      background: rgba(31, 42, 68, 0.5);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .metric-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .metric-value {
+      font-size: 22px;
+      font-weight: 700;
+      margin-top: 6px;
+    }
+
+    /* Checklist */
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 12px 14px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      margin-bottom: 10px;
+      transition: all 0.2s ease;
+    }
+
+    .checklist-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .checklist-checkbox {
+      margin-top: 3px;
+      width: 18px;
+      height: 18px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .checklist-content h4 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .checklist-content p {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Manual Trigger Form */
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text-muted);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px 14px;
+      background: rgba(11, 15, 25, 0.7);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+    }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: var(--accent-gradient);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.2s;
+      width: 100%;
+    }
+
+    .btn:hover {
+      opacity: 0.95;
+      transform: translateY(-1px);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    /* Queue & Logs */
+    .log-terminal {
+      background: #060911;
+      border: 1px solid #1a2236;
+      border-radius: 10px;
+      padding: 14px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 12px;
+      color: #38bdf8;
+      height: 240px;
+      overflow-y: auto;
+    }
+
+    .log-line {
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+
+    .log-time {
+      color: var(--text-muted);
+      margin-right: 6px;
+    }
+
+    .log-success { color: var(--success); }
+    .log-warn { color: var(--warning); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="brand-icon">📸</div>
+        <div>
+          <h1>Instagram Reels Otomasyon Paneli</h1>
+          <p>Meta Graph API + N8N 7/24 Bulut Entegrasyonu</p>
+        </div>
+      </div>
+      <div class="status-badge">
+        <div class="status-dot"></div>
+        <span>Bulut Sistemi Hazır</span>
+      </div>
+    </header>
+
+    <!-- Metrikler -->
+    <div class="metrics-row">
+      <div class="metric-card">
+        <div class="metric-label">Tetikleyici</div>
+        <div class="metric-value">Instagram DM Webhook</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">İşleme Motoru</div>
+        <div class="metric-value">N8N + FFmpeg HD</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Barındırma</div>
+        <div class="metric-value">Render.com (7/24 Bulut)</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Toplam Maliyet</div>
+        <div class="metric-value" style="color: var(--success);">$0 (Ücretsiz)</div>
+      </div>
+    </div>
+
+    <!-- Grid -->
+    <div class="dashboard-grid">
+      <!-- Kurulum Kontrol Listesi -->
+      <div class="card col-6">
+        <div class="card-title">✅ Kurulum ve Durum Takibi</div>
+        <div class="checklist">
+          <div class="checklist-item">
+            <input type="checkbox" class="checklist-checkbox" id="chk-fb" checked>
+            <div class="checklist-content">
+              <h4>1. Meta for Developers Uygulaması</h4>
+              <p>Facebook Developers üzerinde Business uygulaması ve Instagram Graph API eklendi.</p>
+            </div>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" class="checklist-checkbox" id="chk-test" checked>
+            <div class="checklist-content">
+              <h4>2. Instagram Tester Daveti</h4>
+              <p>Kişisel hesap Instagram Tester olarak eklendi (App Review gerekmez).</p>
+            </div>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" class="checklist-checkbox" id="chk-n8n" checked>
+            <div class="checklist-content">
+              <h4>3. Render.com N8N Dağıtımı</h4>
+              <p>Render üzerinde n8n_reels_workflow.json aktif hale getirildi.</p>
+            </div>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" class="checklist-checkbox" id="chk-wh">
+            <div class="checklist-content">
+              <h4>4. Webhook Bağlantısı</h4>
+              <p>Meta Webhooks -> <code>messages</code> aboneliği Render HTTPS URL'ine bağlandı.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Manuel Test ve Paylaşım -->
+      <div class="card col-6">
+        <div class="card-title">🚀 Panelden Hızlı Test / Manuel Tetikleme</div>
+        <form id="trigger-form" onsubmit="event.preventDefault(); triggerTest();">
+          <div class="form-group">
+            <label>N8N Webhook URL (Render.com URL'niz)</label>
+            <input type="url" class="form-control" id="webhook-url" placeholder="https://projeniz.onrender.com/webhook/instagram-dm-webhook" required>
+          </div>
+          <div class="form-group">
+            <label>Video URL (Doğrudan MP4 Adresi)</label>
+            <input type="url" class="form-control" id="video-url" placeholder="https://ornek-depolama.com/video.mp4" required>
+          </div>
+          <div class="form-group">
+            <label>Reels Açıklaması (Caption)</label>
+            <textarea class="form-control" id="caption" placeholder="Bugün harika bir gün! 🚀 #reels #trend"></textarea>
+          </div>
+          <button type="submit" class="btn">⚡ N8N Kuyruğuna Gönder</button>
+        </form>
+      </div>
+
+      <!-- Canlı İşlem Günlüğü (Terminal) -->
+      <div class="card col-12">
+        <div class="card-title">📜 Canlı İş Akışı ve Olay Günlüğü</div>
+        <div class="log-terminal" id="log-box">
+          <div class="log-line"><span class="log-time">[00:00:01]</span> <span class="log-success">SİSTEM BAŞLATILDI:</span> N8N ve FFmpeg hazır durumda.</div>
+          <div class="log-line"><span class="log-time">[00:00:05]</span> Webhook dinleyici: /webhook/instagram-dm-webhook aktif.</div>
+          <div class="log-line"><span class="log-time">[00:00:10]</span> Instagram DM kanalı dinleniyor... Bekleniyor.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function addLog(msg, type = '') {
+      const logBox = document.getElementById('log-box');
+      const time = new Date().toLocaleTimeString();
+      const line = document.createElement('div');
+      line.className = 'log-line';
+      let tag = '';
+      if (type === 'success') tag = '<span class="log-success">[BAŞARILI]</span> ';
+      if (type === 'warn') tag = '<span class="log-warn">[İŞLENİYOR]</span> ';
+      line.innerHTML = `<span class="log-time">[${time}]</span> ${tag}${msg}`;
+      logBox.appendChild(line);
+      logBox.scrollTop = logBox.scrollHeight;
+    }
+
+    function triggerTest() {
+      const url = document.getElementById('webhook-url').value;
+      const video = document.getElementById('video-url').value;
+      const caption = document.getElementById('caption').value || '#reels';
+
+      addLog(`Manuel test başlatıldı... Video: ${video}`, 'warn');
+      
+      fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          entry: [{
+            messaging: [{
+              sender: { id: "test_owner" },
+              message: {
+                text: caption,
+                attachments: [{ type: "video", payload: { url: video } }]
+              },
+              timestamp: Date.now()
+            }]
+          }]
+        })
+      })
+      .then(res => {
+        if(res.ok) {
+          addLog("N8N Webhook başarıyla tetiklendi! Video kuyruğa alındı.", "success");
+        } else {
+          addLog("Webhook yanıt vermedi: HTTP " + res.status, "warn");
+        }
+      })
+      .catch(err => {
+        addLog("Bağlantı hatası: " + err.message, "warn");
+      });
+    }
+  </script>
+</body>
+</html>

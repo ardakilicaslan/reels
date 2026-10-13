@@ -1,0 +1,9 @@
+.env
+__pycache__/
+*.pyc
+downloads/
+*.log
+.venv/
+venv/
+session.json
+processed_messages.json
