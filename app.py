@@ -32,6 +32,9 @@ INSTAGRAM_ACCOUNT_ID = os.getenv("INSTAGRAM_ACCOUNT_ID", "17841426247185906")
 INSTAGRAM_ACCESS_TOKEN = os.getenv("INSTAGRAM_ACCESS_TOKEN", "IGAAbu2bIIfmNBZAFpZAMkdMYmdOYW1IZADBWRWRTNEVEOVdocEM3VmNrWko5VkV1LW1pUGoxWG00YjJ0NnFfTElZALTR1elc5TVhFSUFlWnRhRFR3dERQakttYjJmNjNQbG9qOW4yVFJ5N1pCaXlqckpHdFQtSDQxSXNDc3pqY0xiUQZDZD")
 SERVER_URL = os.getenv("SERVER_URL", "https://reels-mwjz.onrender.com")
 
+# SADECE BU KULLANICIDAN GELEN VİDEOLAR PAYLAŞILIR (GÜVENLİK)
+ALLOWED_USERNAME = "ardakilicaslan"
+
 MEDIA_DIR = Path("/tmp/media")
 MEDIA_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -225,7 +228,25 @@ async def receive_webhook(request: Request, background_tasks: BackgroundTasks):
                 if att.get("type") in ("video", "share"):
                     video_url = att.get("payload", {}).get("url")
                     if video_url:
-                        add_log(f"DM'den video yakalandı! Gönderen: {sender_id}")
+                        # Gönderen kullanıcı adını sorgula
+                        sender_username = ""
+                        try:
+                            u_res = requests.get(
+                                f"https://graph.instagram.com/v21.0/{sender_id}",
+                                params={"fields": "username", "access_token": INSTAGRAM_ACCESS_TOKEN},
+                                timeout=10,
+                            ).json()
+                            sender_username = u_res.get("username", "")
+                        except Exception:
+                            pass
+
+                        add_log(f"DM'den video yakalandı! Gönderen: @{sender_username} (ID: {sender_id})")
+
+                        # Güvenlik Kontrolü: Sadece @ardakilicaslan kabul edilir
+                        if ALLOWED_USERNAME and sender_username and sender_username.lower() != ALLOWED_USERNAME.lower():
+                            add_log(f"⚠️ Video @{sender_username} kullanıcısından geldi. Sadece @{ALLOWED_USERNAME} izinli! Yoksayıldı.", "WARN")
+                            continue
+
                         background_tasks.add_task(
                             process_video_and_publish, video_url, caption, sender_id
                         )
