@@ -6,24 +6,12 @@ services:
     dockerfilePath: Dockerfile
     envVars:
       - key: PORT
-        value: 5678
-      - key: N8N_PORT
-        value: 5678
-      - key: N8N_HOST
-        value: 0.0.0.0
-      - key: N8N_PROTOCOL
-        value: https
-      - key: N8N_EDITOR_BASE_URL
-        value: https://reels-mwjz.onrender.com/
-      - key: N8N_PUSH_BACKEND
-        value: sse
-      - key: WEBHOOK_URL
-        value: https://reels-mwjz.onrender.com/
-      - key: NODES_EXCLUDE
-        value: "[]"
-      - key: N8N_DEFAULT_BINARY_DATA_MODE
-        value: filesystem
-      - key: EXECUTIONS_DATA_PRUNE
-        value: "true"
-      - key: EXECUTIONS_DATA_MAX_AGE
-        value: "72"
+        value: 10000
+      - key: VERIFY_TOKEN
+        value: reels123
+      - key: SERVER_URL
+        value: https://reels-mwjz.onrender.com
+      - key: INSTAGRAM_ACCOUNT_ID
+        sync: false
+      - key: INSTAGRAM_ACCESS_TOKEN
+        sync: false

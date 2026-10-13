@@ -1,29 +1,24 @@
-# AŞAMA 1: Resmi statik FFmpeg ikili dosyalarını al
+# 1. FFmpeg statik ikili dosyaları
 FROM mwader/static-ffmpeg:6.0 AS ffmpeg-source
 
-# AŞAMA 2: Resmi n8n taban imajı
-FROM n8nio/n8n:latest
+# 2. Hafif Python tabanı
+FROM python:3.11-slim
 
-USER root
+WORKDIR /app
 
-# FFmpeg ve FFprobe ikili dosyalarını n8n PATH'ine kopyala
+# FFmpeg kopyala
 COPY --from=ffmpeg-source /ffmpeg /usr/local/bin/
 COPY --from=ffmpeg-source /ffprobe /usr/local/bin/
 
-# Port ve Host ortam değişkenleri
-ENV PORT=5678
-ENV N8N_PORT=5678
-ENV N8N_HOST=0.0.0.0
-ENV N8N_PROTOCOL=https
-ENV N8N_EDITOR_BASE_URL=https://reels-mwjz.onrender.com/
+# Bağımlılıkları yükle
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Render.com'da WebSocket kopmalarını engelleyen kritik ayar: SSE modu
-ENV N8N_PUSH_BACKEND=sse
+# Uygulama kodlarını kopyala
+COPY . .
 
-# Execute Command (FFmpeg) düğümünü aktifleştir
-ENV NODES_EXCLUDE="[]"
+# Render portu
+ENV PORT=10000
+EXPOSE 10000
 
-# n8n kullanıcısına geri dön
-USER node
-
-EXPOSE 5678
+CMD ["sh", "-c", "uvicorn app:app --host 0.0.0.0 --port ${PORT:-10000}"]

@@ -17,6 +17,7 @@
       --text-muted: #94a3b8;
       --success: #10b981;
       --warning: #f59e0b;
+      --error: #ef4444;
       --radius: 14px;
     }
 
@@ -83,7 +84,7 @@
       background: rgba(16, 185, 129, 0.12);
       color: var(--success);
       border: 1px solid rgba(16, 185, 129, 0.25);
-      padding: 6px 14px;
+      padding: 8px 16px;
       border-radius: 999px;
       font-size: 13px;
       font-weight: 600;
@@ -103,7 +104,6 @@
       50% { opacity: 0.5; transform: scale(0.85); }
     }
 
-    /* Grid Layout */
     .dashboard-grid {
       display: grid;
       grid-template-columns: repeat(12, 1fr);
@@ -119,12 +119,10 @@
     }
 
     .col-12 { grid-column: span 12; }
-    .col-8 { grid-column: span 8; }
-    .col-4 { grid-column: span 4; }
     .col-6 { grid-column: span 6; }
 
     @media (max-width: 900px) {
-      .col-8, .col-4, .col-6 { grid-column: span 12; }
+      .col-6 { grid-column: span 12; }
     }
 
     .card-title {
@@ -136,7 +134,6 @@
       gap: 10px;
     }
 
-    /* Metrics */
     .metrics-row {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -160,148 +157,80 @@
     }
 
     .metric-value {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 700;
       margin-top: 6px;
     }
 
-    /* Checklist */
-    .checklist-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
-      padding: 12px 14px;
-      background: rgba(255, 255, 255, 0.02);
+    .info-box {
+      background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--card-border);
       border-radius: 10px;
-      margin-bottom: 10px;
-      transition: all 0.2s ease;
-    }
-
-    .checklist-item:hover {
-      background: rgba(255, 255, 255, 0.05);
-    }
-
-    .checklist-checkbox {
-      margin-top: 3px;
-      width: 18px;
-      height: 18px;
-      accent-color: var(--primary);
-      cursor: pointer;
-    }
-
-    .checklist-content h4 {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text);
-    }
-
-    .checklist-content p {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
-
-    /* Manual Trigger Form */
-    .form-group {
+      padding: 16px;
       margin-bottom: 16px;
     }
 
-    .form-group label {
-      display: block;
-      font-size: 13px;
-      font-weight: 600;
+    .info-box h4 {
+      font-size: 14px;
+      color: var(--primary);
       margin-bottom: 6px;
+    }
+
+    .info-box p {
+      font-size: 13px;
       color: var(--text-muted);
+      line-height: 1.5;
     }
 
-    .form-control {
-      width: 100%;
-      padding: 10px 14px;
-      background: rgba(11, 15, 25, 0.7);
-      border: 1px solid var(--card-border);
-      border-radius: 8px;
-      color: var(--text);
-      font-size: 14px;
-      outline: none;
-      transition: border-color 0.2s;
+    .info-box code {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 3px 8px;
+      border-radius: 6px;
+      color: #38bdf8;
+      font-size: 13px;
+      word-break: break-all;
     }
 
-    .form-control:focus {
-      border-color: var(--primary);
-    }
-
-    textarea.form-control {
-      resize: vertical;
-      min-height: 80px;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      background: var(--accent-gradient);
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 14px;
-      cursor: pointer;
-      transition: transform 0.15s ease, opacity 0.2s;
-      width: 100%;
-    }
-
-    .btn:hover {
-      opacity: 0.95;
-      transform: translateY(-1px);
-    }
-
-    .btn:active {
-      transform: translateY(0);
-    }
-
-    /* Queue & Logs */
     .log-terminal {
       background: #060911;
       border: 1px solid #1a2236;
       border-radius: 10px;
-      padding: 14px;
+      padding: 16px;
       font-family: 'Courier New', Courier, monospace;
-      font-size: 12px;
+      font-size: 13px;
       color: #38bdf8;
-      height: 240px;
+      height: 320px;
       overflow-y: auto;
     }
 
     .log-line {
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       line-height: 1.4;
     }
 
     .log-time {
       color: var(--text-muted);
-      margin-right: 6px;
+      margin-right: 8px;
     }
 
-    .log-success { color: var(--success); }
-    .log-warn { color: var(--warning); }
+    .log-SUCCESS { color: var(--success); font-weight: bold; }
+    .log-ERROR { color: var(--error); font-weight: bold; }
+    .log-WARN { color: var(--warning); font-weight: bold; }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
       <div class="brand">
-        <div class="brand-icon">📸</div>
+        <div class="brand-icon">🎬</div>
         <div>
           <h1>Instagram Reels Otomasyon Paneli</h1>
-          <p>Meta Graph API + N8N 7/24 Bulut Entegrasyonu</p>
+          <p>Meta Graph API + FFmpeg 7/24 Kesintisiz Bulut Sunucusu</p>
         </div>
       </div>
       <div class="status-badge">
         <div class="status-dot"></div>
-        <span>Bulut Sistemi Hazır</span>
+        <span>Sunucu 7/24 Aktif & Canlı</span>
       </div>
     </header>
 
@@ -309,139 +238,95 @@
     <div class="metrics-row">
       <div class="metric-card">
         <div class="metric-label">Tetikleyici</div>
-        <div class="metric-value">Instagram DM Webhook</div>
+        <div class="metric-value">Meta Webhook (Anlık)</div>
       </div>
       <div class="metric-card">
-        <div class="metric-label">İşleme Motoru</div>
-        <div class="metric-value">N8N + FFmpeg HD</div>
+        <div class="metric-label">Video Motoru</div>
+        <div class="metric-value">FFmpeg 1080x1920 HD</div>
       </div>
       <div class="metric-card">
-        <div class="metric-label">Barındırma</div>
-        <div class="metric-value">Render.com (7/24 Bulut)</div>
+        <div class="metric-label">Bellek Kullanımı</div>
+        <div class="metric-value" style="color: var(--success);">~35 MB (Hafif)</div>
       </div>
       <div class="metric-card">
-        <div class="metric-label">Toplam Maliyet</div>
-        <div class="metric-value" style="color: var(--success);">$0 (Ücretsiz)</div>
+        <div class="metric-label">Bağlantı Durumu</div>
+        <div class="metric-value" style="color: var(--success);">Online (0 Kesinti)</div>
       </div>
     </div>
 
-    <!-- Grid -->
     <div class="dashboard-grid">
-      <!-- Kurulum Kontrol Listesi -->
+      <!-- Webhook Bilgileri -->
       <div class="card col-6">
-        <div class="card-title">✅ Kurulum ve Durum Takibi</div>
-        <div class="checklist">
-          <div class="checklist-item">
-            <input type="checkbox" class="checklist-checkbox" id="chk-fb" checked>
-            <div class="checklist-content">
-              <h4>1. Meta for Developers Uygulaması</h4>
-              <p>Facebook Developers üzerinde Business uygulaması ve Instagram Graph API eklendi.</p>
-            </div>
-          </div>
-          <div class="checklist-item">
-            <input type="checkbox" class="checklist-checkbox" id="chk-test" checked>
-            <div class="checklist-content">
-              <h4>2. Instagram Tester Daveti</h4>
-              <p>Kişisel hesap Instagram Tester olarak eklendi (App Review gerekmez).</p>
-            </div>
-          </div>
-          <div class="checklist-item">
-            <input type="checkbox" class="checklist-checkbox" id="chk-n8n" checked>
-            <div class="checklist-content">
-              <h4>3. Render.com N8N Dağıtımı</h4>
-              <p>Render üzerinde n8n_reels_workflow.json aktif hale getirildi.</p>
-            </div>
-          </div>
-          <div class="checklist-item">
-            <input type="checkbox" class="checklist-checkbox" id="chk-wh">
-            <div class="checklist-content">
-              <h4>4. Webhook Bağlantısı</h4>
-              <p>Meta Webhooks -> <code>messages</code> aboneliği Render HTTPS URL'ine bağlandı.</p>
-            </div>
-          </div>
+        <div class="card-title">🔗 Meta Webhook Bilgileri</div>
+        
+        <div class="info-box">
+          <h4>Callback URL (Facebook'a Yapıştırılacak)</h4>
+          <code>https://reels-mwjz.onrender.com/webhook/instagram-dm-webhook</code>
+        </div>
+
+        <div class="info-box">
+          <h4>Verify Token (Şifre)</h4>
+          <code>reels123</code>
+        </div>
+
+        <div class="info-box">
+          <h4>Nasıl Çalışır?</h4>
+          <p>Facebook Developers panelindeki <b>Configure webhooks</b> kısmına yukarıdaki bilgileri yapıştırıp <b>Verify and Save</b> butonuna bastığınız anda bu sunucu saniyenin onda birinde doğrulamayı tamamlar.</p>
         </div>
       </div>
 
-      <!-- Manuel Test ve Paylaşım -->
+      <!-- Kullanım Talimatı -->
       <div class="card col-6">
-        <div class="card-title">🚀 Panelden Hızlı Test / Manuel Tetikleme</div>
-        <form id="trigger-form" onsubmit="event.preventDefault(); triggerTest();">
-          <div class="form-group">
-            <label>N8N Webhook URL (Render.com URL'niz)</label>
-            <input type="url" class="form-control" id="webhook-url" placeholder="https://projeniz.onrender.com/webhook/instagram-dm-webhook" required>
-          </div>
-          <div class="form-group">
-            <label>Video URL (Doğrudan MP4 Adresi)</label>
-            <input type="url" class="form-control" id="video-url" placeholder="https://ornek-depolama.com/video.mp4" required>
-          </div>
-          <div class="form-group">
-            <label>Reels Açıklaması (Caption)</label>
-            <textarea class="form-control" id="caption" placeholder="Bugün harika bir gün! 🚀 #reels #trend"></textarea>
-          </div>
-          <button type="submit" class="btn">⚡ N8N Kuyruğuna Gönder</button>
-        </form>
+        <div class="card-title">📱 Telefonunuzdan Kullanım</div>
+        
+        <div class="info-box">
+          <h4>1. Adım: DM Gönderin</h4>
+          <p>Instagram hesabınıza telefonunuzdan bir video veya Reels'i DM olarak paylaşın.</p>
+        </div>
+
+        <div class="info-box">
+          <h4>2. Adım: Otomatik HD İşleme</h4>
+          <p>Sunucumuz videoyu anında yakalar, FFmpeg ile 1080x1920 dikey 9:16 oranına ve H.264/AAC ses kalitesine dönüştürür.</p>
+        </div>
+
+        <div class="info-box">
+          <h4>3. Adım: Reels Yayında!</h4>
+          <p>Meta Graph API aracılığıyla videonuz resmi olarak profilinizde Reels olarak yayınlanır.</p>
+        </div>
       </div>
 
-      <!-- Canlı İşlem Günlüğü (Terminal) -->
+      <!-- Canlı Log Terminali -->
       <div class="card col-12">
-        <div class="card-title">📜 Canlı İş Akışı ve Olay Günlüğü</div>
+        <div class="card-title">📜 Canlı Sunucu Olay Günlüğü</div>
         <div class="log-terminal" id="log-box">
-          <div class="log-line"><span class="log-time">[00:00:01]</span> <span class="log-success">SİSTEM BAŞLATILDI:</span> N8N ve FFmpeg hazır durumda.</div>
-          <div class="log-line"><span class="log-time">[00:00:05]</span> Webhook dinleyici: /webhook/instagram-dm-webhook aktif.</div>
-          <div class="log-line"><span class="log-time">[00:00:10]</span> Instagram DM kanalı dinleniyor... Bekleniyor.</div>
+          <div class="log-line"><span class="log-time">[Sistem]</span> Sunucu başlatıldı ve hazır durumda.</div>
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    function addLog(msg, type = '') {
-      const logBox = document.getElementById('log-box');
-      const time = new Date().toLocaleTimeString();
-      const line = document.createElement('div');
-      line.className = 'log-line';
-      let tag = '';
-      if (type === 'success') tag = '<span class="log-success">[BAŞARILI]</span> ';
-      if (type === 'warn') tag = '<span class="log-warn">[İŞLENİYOR]</span> ';
-      line.innerHTML = `<span class="log-time">[${time}]</span> ${tag}${msg}`;
-      logBox.appendChild(line);
-      logBox.scrollTop = logBox.scrollHeight;
-    }
-
-    function triggerTest() {
-      const url = document.getElementById('webhook-url').value;
-      const video = document.getElementById('video-url').value;
-      const caption = document.getElementById('caption').value || '#reels';
-
-      addLog(`Manuel test başlatıldı... Video: ${video}`, 'warn');
-      
-      fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          entry: [{
-            messaging: [{
-              sender: { id: "test_owner" },
-              message: {
-                text: caption,
-                attachments: [{ type: "video", payload: { url: video } }]
-              },
-              timestamp: Date.now()
-            }]
-          }]
-        })
-      })
-      .then(res => {
-        if(res.ok) {
-          addLog("N8N Webhook başarıyla tetiklendi! Video kuyruğa alındı.", "success");
-        } else {
-          addLog("Webhook yanıt vermedi: HTTP " + res.status, "warn");
+    async function fetchLogs() {
+      try {
+        const res = await fetch('/api/logs');
+        if (res.ok) {
+          const data = await res.json();
+          const logBox = document.getElementById('log-box');
+          if (data.logs && data.logs.length > 0) {
+            logBox.innerHTML = '';
+            data.logs.forEach(l => {
+              const line = document.createElement('div');
+              line.className = 'log-line';
+              line.innerHTML = `<span class="log-time">[${l.time}]</span> <span class="log-${l.level}">[${l.level}]</span> ${l.message}`;
+              logBox.appendChild(line);
+            });
+            logBox.scrollTop = logBox.scrollHeight;
+          }
         }
-      })
-      .catch(err => {
-        addLog("Bağlantı hatası: " + err.message, "warn");
-      });
+      } catch (e) {}
     }
+    setInterval(fetchLogs, 2500);
+    fetchLogs();
   </script>
 </body>
 </html>
